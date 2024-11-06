@@ -1,9 +1,3 @@
-//
-//  TimerViewModel.swift
-//  168dairy
-//
-//  Created by Jabin on 2024/11/5.
-//
 import SwiftUI
 
 class FastingTimerViewModel: ObservableObject {
