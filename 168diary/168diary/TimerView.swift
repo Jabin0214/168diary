@@ -7,7 +7,7 @@ struct TimerView: View {
     @State var state: TimerState = .nothing
 
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 30) {
             Spacer()
 
             Text(timeDifferenceText)
@@ -16,6 +16,11 @@ struct TimerView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
                 .shadow(radius: 5)
+            
+            Text("Start Time: " + fastingTimer.getDate())
+                .font(.title3)
+                .padding()
+            
 
             Spacer()
 
@@ -27,14 +32,12 @@ struct TimerView: View {
 
             Button("Start Fasting") {
                 fastingTimer.saveStartTime()
-                fastingTimer.setState(state: .fasting)
                 restartTimer(state: .fasting)
             }
             .styledButton()
 
             Button("Start Eating") {
                 fastingTimer.saveStartTime()
-                fastingTimer.setState(state: .eating)
                 restartTimer(state: .eating)
             }
             .styledButton()
@@ -43,6 +46,7 @@ struct TimerView: View {
         }
         .padding()
         .onAppear {
+            timeDifferenceText=fastingTimer.timeDifference(state: state)
             state = fastingTimer.loadState()
             if state != .nothing {
                 restartTimer(state: state)
@@ -51,6 +55,7 @@ struct TimerView: View {
     }
 
     func restartTimer(state: TimerState) {
+        fastingTimer.setState(state: state)
         timer?.invalidate() // Stop any existing timer
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             timeDifferenceText = fastingTimer.timeDifference(state: state)
@@ -66,7 +71,7 @@ extension Button {
             .foregroundColor(.white)
             .padding()
             .frame(width: 210)
-            .background(Color.red)
+            .background(Color(red: 150/255, green: 123/255, blue: 182/255))
             .cornerRadius(12)
     }
 }

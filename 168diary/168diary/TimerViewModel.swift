@@ -5,7 +5,18 @@ class FastingTimerViewModel: ObservableObject {
     private let timerStateKey = "timerState"
 
     
-    
+
+    func getDate() -> String {
+        guard let date = UserDefaults.standard.object(forKey: startTimeKey) as? Date else {
+            return "No start time set"
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        
+        return formatter.string(from: date)
+    }
     
     
     func saveStartTime() {
@@ -26,28 +37,30 @@ class FastingTimerViewModel: ObservableObject {
     }
     
     
+    
     func timeDifference(state: TimerState?) -> String {
 
-        let eatingDuration: TimeInterval = 8 * 3600  // 8 hours in seconds
+        let eatingDuration: TimeInterval = 5  // 8 hours in seconds
         // 从 UserDefaults 读取时间并进行类型转换
         guard let startTime = UserDefaults.standard.object(forKey: startTimeKey) as? Date else {
             return "00:00:00"
         }
+        
         var timeInterval: Int
-        if state == .eating {
-            // 计算吃饭阶段剩余时间
-            let timeSinceStart = Date().timeIntervalSince(startTime)
-            timeInterval = Int(eatingDuration - timeSinceStart)
-            if timeInterval < 0 {
+        
+        switch state {
+        case .eating:
+            timeInterval = Int(eatingDuration - Date().timeIntervalSince(startTime))
+            if timeInterval == 0 {
+                sendEndOfEatingNotification()
                 return "Stop Eating!!"
             }
-        } else if state == .fasting {
-            // 计算禁食阶段已过时间
+        case .fasting:
             timeInterval = Int(Date().timeIntervalSince(startTime))
-        } else {
-            // 如果没有指定状态，视为禁食状态
-            timeInterval = Int(Date().timeIntervalSince(startTime))
+        default:
+            return "00:00:00"
         }
+        
 
         // 计算小时、分钟、秒
         let hours = timeInterval / 3600
