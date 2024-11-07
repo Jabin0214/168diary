@@ -11,7 +11,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("168 Dairy")
+            Text("168 Diary")
                 .font(.title)
             
             TabView {
